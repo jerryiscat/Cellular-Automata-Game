@@ -1,4 +1,4 @@
-# Elemental Puzzler (C + raylib)
+# Cellular Automata Game (C + raylib)
 
 A puzzle game where you guide water and other elements through obstacles to fill containers. Built with C and raylib.
 
