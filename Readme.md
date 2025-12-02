@@ -6,6 +6,8 @@ A puzzle game where you guide water and other elements through obstacles to fill
 
 ![Game Demo](elemental_puzzler.gif)
 
+[Try it!!](https://jerryiscat.github.io/personal-website/#/game/cellular-automata)
+
 ## Features
 
 - **4 Levels** with increasing difficulty and unique mechanics
