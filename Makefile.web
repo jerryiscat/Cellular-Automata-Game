@@ -1,0 +1,32 @@
+CC = emcc
+CFLAGS = -I./raylib-web/include -O2 -std=c99 -Wall
+LDFLAGS = -L./raylib-web/lib -lraylib
+
+SOURCES = main.c logic.c levels.c level_1.c level_2.c level_3.c level_4.c savegame.c
+TARGET = game.html
+
+all:
+	@echo "Building for web with Emscripten..."
+	@if ! command -v emcc &> /dev/null; then \
+		echo "Error: emcc not found. Please install Emscripten first."; \
+		echo "See WEB_BUILD.md for instructions."; \
+		exit 1; \
+	fi
+	$(CC) $(SOURCES) -o $(TARGET) $(CFLAGS) $(LDFLAGS) \
+		-s USE_GLFW=3 \
+		-s ASYNCIFY \
+		-s ALLOW_MEMORY_GROWTH=1 \
+		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+		--shell-file shell.html \
+		-s FORCE_FILESYSTEM=0 \
+		-DPLATFORM_WEB
+	@echo "Build complete! Files generated:"
+	@echo "  - game.html (main file)"
+	@echo "  - game.js"
+	@echo "  - game.wasm"
+	@echo ""
+	@echo "To run locally, use: python3 -m http.server 8000"
+	@echo "Then open: http://localhost:8000/game.html"
+
+clean:
+	rm -f $(TARGET) game.js game.wasm game.data

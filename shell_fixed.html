@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elemental Puzzler</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: Arial, sans-serif;
+        }
+        #canvas-container {
+            text-align: center;
+        }
+        #emscripten {
+            margin: 0 auto;
+        }
+        canvas {
+            border: 2px solid #333;
+            display: block;
+            margin: 0 auto;
+        }
+        #loading {
+            color: #fff;
+            font-size: 18px;
+            margin: 20px;
+        }
+        #error {
+            color: #ff4444;
+            font-size: 14px;
+            margin: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container">
+        <div id="loading">Loading game...</div>
+        <div id="error"></div>
+        <div id="emscripten"></div>
+    </div>
+    
+    <script>
+        var Module = {
+            locateFile: function(path) {
+                if (path.endsWith('.wasm')) {
+                    return 'game.wasm';
+                }
+                return path;
+            },
+            onRuntimeInitialized: function() {
+                var loading = document.getElementById('loading');
+                if (loading) loading.style.display = 'none';
+                console.log('Game initialized successfully!');
+            },
+            printErr: function(text) {
+                console.error(text);
+                var errorDiv = document.getElementById('error');
+                if (errorDiv && (text.toLowerCase().indexOf('error') !== -1 || text.toLowerCase().indexOf('fail') !== -1)) {
+                    errorDiv.style.display = 'block';
+                    errorDiv.textContent = 'Error: ' + text;
+                    var loading = document.getElementById('loading');
+                    if (loading) loading.textContent = 'Failed to load game';
+                }
+            },
+            setStatus: function(text) {
+                var loadingDiv = document.getElementById('loading');
+                if (loadingDiv) {
+                    loadingDiv.textContent = text;
+                }
+                console.log('Status: ' + text);
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function(left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                if (left > 0) {
+                    Module.setStatus('Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')');
+                } else {
+                    Module.setStatus('All downloads complete.');
+                }
+            },
+            element: document.getElementById('emscripten')
+        };
+    </script>
+{{{ SCRIPT }}}
+</body>
+</html>
+
